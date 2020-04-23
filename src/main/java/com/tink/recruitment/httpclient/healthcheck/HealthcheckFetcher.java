@@ -1,26 +1,24 @@
 package com.tink.recruitment.httpclient.healthcheck;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 
 @Component
 @RequiredArgsConstructor
 public class HealthcheckFetcher {
 
-    @Value("${base.url:http://localhost:5000}")
+    @Value("${base.url}")
     private String baseUrl;
 
-    private final Client client;
+    private final RestTemplate restTemplate;
 
     public HealthcheckResponse fetchData() {
-        WebResource resource = client.resource(baseUrl + "/api/healthcheck");
-        ClientResponse response = resource.get(ClientResponse.class);
-        return response.getEntity(HealthcheckResponse.class);
+        ResponseEntity<HealthcheckResponse> response = restTemplate.getForEntity(baseUrl + "/api/healthcheck", HealthcheckResponse.class);
+        return response.getBody();
     }
 
 }
